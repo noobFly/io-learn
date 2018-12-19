@@ -1,2 +1,2 @@
 # io-learn
-com.noob.learn.bio 基础socke实现阻塞IO通讯
+com.noob.learn.bio 基础socket实现阻塞IO通讯
