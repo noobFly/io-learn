@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Scanner;
 
 /**
@@ -14,11 +15,12 @@ import java.util.Scanner;
  */
 public class ClientRequestHandler implements Runnable {
 
-    private Socket       clientSocket; //独占式客户端的连接socket
-    private Response     response;    //响应自定义处理
+    private Socket        clientSocket;       //独占式客户端的连接socket
+    private Response      response;           //响应自定义处理
 
-    private InputStream  inputStream; // 输入请求
-    private OutputStream outputStream; // 输出响应
+    private InputStream   inputStream;        // 输入请求
+    private OutputStream  outputStream;       // 输出响应
+    private SocketAddress clientSocketAddress;
 
     public ClientRequestHandler(Socket clientSocket, Response response) throws IOException {
         this.clientSocket = clientSocket;
@@ -30,12 +32,16 @@ public class ClientRequestHandler implements Runnable {
     private void init() throws IOException {
         inputStream = clientSocket.getInputStream();
         outputStream = clientSocket.getOutputStream();
+        clientSocketAddress = clientSocket.getRemoteSocketAddress();
+
     }
 
     /**
      * 接收请求并返回响应。 接收、响应的字符中是否带\n以读取方式有关
      */
     public void run() {
+        System.out.println("客户端连接: " + clientSocketAddress);
+
         try {
             handleWithoutLineBreak();
             // handleWithLineBreak1();
@@ -84,7 +90,7 @@ public class ClientRequestHandler implements Runnable {
     }
 
     private void outwrite(int turns, String request) throws IOException {
-        System.out.println("接收到客户端信息： " + request);
+        System.out.println("接收到客户端" + clientSocketAddress + "的信息： " + request);
 
         //在本测试用例中，是否需要输出"\n" 由客户端的读取方式而定！
         String msg = response.handle(request, turns);
