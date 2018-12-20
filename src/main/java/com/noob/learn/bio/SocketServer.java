@@ -6,7 +6,8 @@ import java.net.Socket;
 
 /**
  * 单线程阻塞
- *
+ * <p>
+ * 客户端独占服务端，当前连接的客户端不释放，其他客户端阻塞!!!
  */
 public class SocketServer {
 

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,19 +16,36 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SocketClient {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        //创建客户端Socket，指定连接服务器地址和端口
-        Socket socket = new Socket("localhost", 8080);
-        SocketAddress localSocketAddress = socket.getLocalSocketAddress();
-        System.out.println("客户端启动:" + localSocketAddress);//每一个客户端分配一个端口号
+    public static void main(String[] args) {
+        try {
+            //创建客户端Socket，指定连接服务器地址和端口
+            Socket socket = new Socket("localhost", 8080);
+            System.out.println("客户端启动:" + socket.getLocalSocketAddress());//每一个客户端分配一个端口号
 
-        OutputStream outputStream = socket.getOutputStream();//字节输出
-        PrintWriter outputPrint = new PrintWriter(outputStream);//将输出流包装成打印流
+            //获取输入流，并读取服务器端的响应
+            InputStream inputStream = socket.getInputStream();
+            Scanner inputScanner = acceptResponse(inputStream);
 
-        int waitTime = sendMsgToServer(localSocketAddress, outputPrint);
+            OutputStream outputStream = socket.getOutputStream();//字节输出
+            PrintWriter outputPrint = new PrintWriter(outputStream);//将输出流包装成打印流
+            //  int waitTime = keepSendMsgToServer(socket, outputPrint);
+            int waitTime = sendMsgToServerOne(socket, outputPrint);
 
-        //获取输入流，并读取服务器端的响应
-        InputStream inputStream = socket.getInputStream();
+            Thread.sleep(waitTime);
+            outputPrint.close();
+            outputStream.close();
+            inputStream.close();
+            inputScanner.close();
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 接收消息
+     */
+    private static Scanner acceptResponse(InputStream inputStream) {
         Scanner inputScanner = new Scanner(inputStream);
         Thread inputThread = new Thread(() -> {
             while (true) {
@@ -42,24 +58,24 @@ public class SocketClient {
 
         inputThread.setDaemon(true); // 守护线程设置前会判定线程是否Alive，是则抛出IllegalThreadStateException 
         inputThread.start();
-        Thread.sleep(waitTime);
-        outputPrint.close();
-        outputStream.close();
-        inputStream.close();
-        inputScanner.close();
-        socket.close();
+        return inputScanner;
     }
 
-    private static int sendMsgToServer(SocketAddress localSocketAddress, PrintWriter outputPrint) {
+    /**
+     * 一直发
+     * 
+     * @return
+     */
+    private static int keepSendMsgToServer(Socket socket, PrintWriter outputPrint) {
         //获取输出流，定时向服务器端发信息
         Thread outputThread = new Thread(() -> {
             ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
 
             AtomicInteger time = new AtomicInteger(1);
             service.scheduleWithFixedDelay(() -> {
-                String msg = "来自客户端" + localSocketAddress + "的慰问" + time.intValue();
+                String msg = "来自客户端" + socket.getLocalSocketAddress() + "的慰问" + time.intValue();
                 outputPrint.write(msg);
-                // outputPrint.println(); // 若服务端使用readLine, 一定要输出一个换行！！ 否则服务端读取不了客户端的输出流。 【经测试，只有在客户端被下线后，才会全部打印出来】
+                // outputPrint.println(); // 若服务端使用readLine, 一定要输出一个换行！！ 否则服务端读取不了客户端的输出流。 【经测试，在客户端异常下线后，才会全部打印出来， 正常shutdownOutput、close后服务端接收到的是null!】
                     outputPrint.flush();
                     time.addAndGet(1);
                 }, 0, 2, TimeUnit.SECONDS);
@@ -67,5 +83,24 @@ public class SocketClient {
         });
         outputThread.start();
         return 100000;
+    }
+
+    /**
+     * 发一次就关闭
+     * 
+     * @return
+     * @throws IOException
+     */
+    private static int sendMsgToServerOne(Socket socket, PrintWriter outputPrint) {
+        //获取输出流，定时向服务器端发信息
+        String msg = "来自客户端" + socket.getLocalSocketAddress() + "的慰问";
+        outputPrint.write(msg);
+        outputPrint.flush();
+        try {
+            socket.shutdownOutput(); // 关闭输出流 ,后续再输出无效。 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 10000;
     }
 }
