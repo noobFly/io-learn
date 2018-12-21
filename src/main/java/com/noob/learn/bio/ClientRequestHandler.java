@@ -15,7 +15,7 @@ import java.util.Scanner;
  */
 public class ClientRequestHandler implements Runnable {
 
-    private Socket        clientSocket;       //独占式客户端的连接socket
+    private Socket        clientSocket;       //客户端socket
     private Response      response;           //响应自定义处理
 
     private InputStream   inputStream;        // 输入请求
@@ -43,9 +43,9 @@ public class ClientRequestHandler implements Runnable {
         System.out.println("客户端连接: " + clientSocketAddress);
 
         try {
-             handleWithoutLineBreak();
+            //   handleWithoutLineBreak();
          //   handleWithLineBreak1();
-             //  handleWithLineBreak2();
+              handleWithLineBreak2();
         } catch (IOException e) {
             throw new RuntimeException(e);
 
@@ -74,6 +74,7 @@ public class ClientRequestHandler implements Runnable {
         while (true) {
             if (input.hasNext()) { // 阻塞，等待客户端数据！！
                 outwrite(turns, input.nextLine());
+                // 如果客户端传递的消息中没有"\n"， 只有在客户端close、shutdownOutput后消息才会全部打印处理; 异常退出时，还抛出异常： java.net.SocketException: Connection reset by peer: socket write error
                 turns++;
             }
         }
@@ -83,8 +84,9 @@ public class ClientRequestHandler implements Runnable {
     private void handleWithLineBreak2() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         int turns = 1;
-        while (br.readLine() != null) { 
+        while (br.readLine() != null) {
             outwrite(turns, br.readLine());
+            // 如果客户端传递的消息中没有"\n" , 当客户端正常shutdownOutput、close 时才会进入当前行执行，得到的结果是null; 异常退出时，服务端抛出异常： java.net.SocketException: Connection reset
             turns++;
         }
     }

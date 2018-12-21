@@ -50,7 +50,8 @@ public class SocketClient {
         Thread inputThread = new Thread(() -> {
             while (true) {
                 if (inputScanner.hasNext()) { //阻塞获取数据！！！
-                    System.out.println(inputScanner.nextLine()); // 要求服务端响应一定要输出一个换行！！ 否则读取不了这个响应. 【经测试，只有在服务端被下线后，才会全部打印出来】
+                    // 要求服务端响应一定要输出一个换行！！ 否则虽然能读取响应，但无法解析判定line end！ 
+                    System.out.println(inputScanner.nextLine());
                 }
             }
 
@@ -75,8 +76,7 @@ public class SocketClient {
             service.scheduleWithFixedDelay(() -> {
                 String msg = "来自客户端" + socket.getLocalSocketAddress() + "的慰问" + time.intValue();
                 outputPrint.write(msg);
-                // outputPrint.println(); // 若服务端使用readLine, 一定要输出一个换行！！ 否则服务端读取不了客户端的输出流。 【经测试，在客户端异常下线后，才会全部打印出来， 正常shutdownOutput、close后服务端接收到的是null!】
-                    outputPrint.flush();
+                outputPrint.flush(); // 这里才能正式推，很关键！
                     time.addAndGet(1);
                 }, 0, 2, TimeUnit.SECONDS);
 
@@ -95,12 +95,13 @@ public class SocketClient {
         //获取输出流，定时向服务器端发信息
         String msg = "来自客户端" + socket.getLocalSocketAddress() + "的慰问";
         outputPrint.write(msg);
-        outputPrint.flush();
+        // outputPrint.println(); // 若服务端使用readLine, 一定要输出一个换行！！ 否则服务端虽然能读取客户端的输出流，但无法解析判定line end！ 
+        outputPrint.flush();// 这里才能正式推 ，很关键！
         try {
             socket.shutdownOutput(); // 关闭输出流 ,后续再输出无效。 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 10000;
+        return 100;
     }
 }
