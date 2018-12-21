@@ -43,9 +43,9 @@ public class ClientRequestHandler implements Runnable {
         System.out.println("客户端连接: " + clientSocketAddress);
 
         try {
-            handleWithoutLineBreak();
-            // handleWithLineBreak1();
-            //  handleWithLineBreak2();
+             handleWithoutLineBreak();
+         //   handleWithLineBreak1();
+             //  handleWithLineBreak2();
         } catch (IOException e) {
             throw new RuntimeException(e);
 
@@ -59,7 +59,7 @@ public class ClientRequestHandler implements Runnable {
         BufferedInputStream br = new BufferedInputStream(inputStream);
         byte[] buffer = new byte[1024];
         int turns = 1;
-        while (br.read(buffer) != -1) { // 每次读取的存储位置都是从0开始。 read(b, 0, b.length)。经过本场景下的测试，开始位置还必须是0 !!!!
+        while (br.read(buffer) != -1) { // 阻塞直到有数据到来!  每次读取的存储位置都是从0开始。 read(b, 0, b.length)。经过本场景下的测试，开始位置还必须是0 !!!!
             outwrite(turns, new String(buffer));
             turns++;
         }
@@ -83,7 +83,7 @@ public class ClientRequestHandler implements Runnable {
     private void handleWithLineBreak2() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         int turns = 1;
-        while (br.readLine() != null) {
+        while (br.readLine() != null) { 
             outwrite(turns, br.readLine());
             turns++;
         }
