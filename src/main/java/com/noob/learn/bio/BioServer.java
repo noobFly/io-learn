@@ -42,18 +42,18 @@ public class BioServer {
         while (true) {
             Socket clientSocket = serverSocket.accept(); //等待客户端连接--阻塞!!!
             // requestHandlerAsync(clientSocket);
-            requestHandler(clientSocket);
+            requestHandler(clientSocket); // 可选多线程处理
         }
     }
 
-    private static void requestHandlerAsync(Socket clientSocket) throws IOException {
-        new Thread(new ClientRequestHandler(clientSocket, new Response())).start();
-    }
-
     /**
-     * 客户端独占服务端，当前连接的客户端不释放，其他客户端阻塞.
+     * 单线程执行，客户端独占服务端，当前连接的客户端不释放，其他客户端阻塞.
      */
     private static void requestHandler(Socket clientSocket) throws IOException {
-        new ClientRequestHandler(clientSocket, new Response()).run();
+        new RequestHandler(clientSocket).run();
+    }
+
+    private static void requestHandlerAsync(Socket clientSocket) throws IOException {
+        new Thread(new RequestHandler(clientSocket)).start();
     }
 }

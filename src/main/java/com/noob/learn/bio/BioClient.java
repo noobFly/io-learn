@@ -14,31 +14,34 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 阻塞IO
  */
-public class SocketClient {
+public class BioClient {
+    private static OutputStream outputStream = null;
+    private static PrintWriter  outputPrint  = null;
+    private static InputStream  inputStream  = null;
+    private static Scanner      inputScanner = null;
+    private static Socket       socket       = null;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         try {
             //创建客户端Socket，指定连接服务器地址和端口
-            Socket socket = new Socket("localhost", 8080);
+            socket = new Socket("localhost", 8080);
             System.out.println("客户端启动:" + socket.getLocalSocketAddress());//每一个客户端分配一个端口号
 
             //获取输入流，并读取服务器端的响应
-            InputStream inputStream = socket.getInputStream();
-            Scanner inputScanner = acceptResponse(inputStream);
+            inputStream = socket.getInputStream();
+            inputScanner = acceptResponse(inputStream);
 
-            OutputStream outputStream = socket.getOutputStream();//字节输出
-            PrintWriter outputPrint = new PrintWriter(outputStream);//将输出流包装成打印流
-            //  int waitTime = keepSendMsgToServer(socket, outputPrint);
+            outputStream = socket.getOutputStream();//字节输出
+            outputPrint = new PrintWriter(outputStream);//将输出流包装成打印流
+            // int waitTime = keepSendMsgToServer(socket, outputPrint);
             int waitTime = sendMsgToServerOne(socket, outputPrint);
 
             Thread.sleep(waitTime);
-            outputPrint.close();
-            outputStream.close();
-            inputStream.close();
-            inputScanner.close();
-            socket.close();
+
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            closeIo();
         }
     }
 
@@ -93,7 +96,7 @@ public class SocketClient {
      */
     private static int sendMsgToServerOne(Socket socket, PrintWriter outputPrint) {
         //获取输出流，定时向服务器端发信息
-        String msg = "来自客户端" + socket.getLocalSocketAddress() + "的慰问";
+        String msg = "来自客户端" + socket.getLocalSocketAddress() + "的慰问1";
         outputPrint.write(msg);
         // outputPrint.println(); // 若服务端使用readLine, 一定要输出一个换行！！ 否则服务端虽然能读取客户端的输出流，但无法解析判定line end！ 
         outputPrint.flush();// 这里才能正式推 ，很关键！
@@ -103,5 +106,18 @@ public class SocketClient {
             e.printStackTrace();
         }
         return 100;
+    }
+
+    private static void closeIo() throws IOException {
+        if (outputPrint != null)
+            outputPrint.close();
+        if (outputStream != null)
+            outputStream.close();
+        if (inputStream != null)
+            inputStream.close();
+        if (inputScanner != null)
+            inputScanner.close();
+        if (socket != null)
+            socket.close();
     }
 }

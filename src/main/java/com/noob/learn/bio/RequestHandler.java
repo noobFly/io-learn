@@ -13,18 +13,16 @@ import java.util.Scanner;
 /**
  * 与客户端通讯处理
  */
-public class ClientRequestHandler implements Runnable {
+public class RequestHandler implements Runnable {
 
     private Socket        clientSocket;       //客户端socket
-    private Response      response;           //响应自定义处理
 
     private InputStream   inputStream;        // 输入请求
     private OutputStream  outputStream;       // 输出响应
     private SocketAddress clientSocketAddress;
 
-    public ClientRequestHandler(Socket clientSocket, Response response) throws IOException {
+    public RequestHandler(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
-        this.response = response;
         init();
 
     }
@@ -43,9 +41,9 @@ public class ClientRequestHandler implements Runnable {
         System.out.println("客户端连接: " + clientSocketAddress);
 
         try {
-            //   handleWithoutLineBreak();
-         //   handleWithLineBreak1();
-              handleWithLineBreak2();
+            handleWithoutLineBreak();
+            // handleWithLineBreak1();
+            //     handleWithLineBreak2();
         } catch (IOException e) {
             throw new RuntimeException(e);
 
@@ -95,7 +93,7 @@ public class ClientRequestHandler implements Runnable {
         System.out.println("接收到客户端" + clientSocketAddress + "的信息： " + request);
 
         //在本测试用例中，是否需要输出"\n" 由客户端的读取方式而定！
-        String msg = response.handle(request, turns);
+        String msg = "来自服务端的感谢" + turns + ", 因为: " + request + "\n";
         outputStream.write(msg.getBytes());
     }
 }
