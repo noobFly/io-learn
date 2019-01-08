@@ -77,7 +77,8 @@ public class BioClient {
 
             AtomicInteger time = new AtomicInteger(1);
             service.scheduleWithFixedDelay(() -> {
-                String msg = "来自客户端" + socket.getLocalSocketAddress() + "的慰问" + time.intValue();
+                String msg = "客户端" + socket.getLocalSocketAddress() + "的慰问" + time.intValue();
+                System.out.println("发出信息 ->>>>" + msg);
                 outputPrint.write(msg);
                 outputPrint.flush(); // 这里才能正式推，很关键！
                     time.addAndGet(1);
@@ -96,7 +97,8 @@ public class BioClient {
      */
     private static int sendMsgToServerOne(Socket socket, PrintWriter outputPrint) {
         //获取输出流，定时向服务器端发信息
-        String msg = "来自客户端" + socket.getLocalSocketAddress() + "的慰问1";
+        String msg = "客户端" + socket.getLocalSocketAddress() + "的慰问1";
+        System.out.println("发出信息->>>>" + msg);
         outputPrint.write(msg);
         // outputPrint.println(); // 若服务端使用readLine, 一定要输出一个换行！！ 否则服务端虽然能读取客户端的输出流，但无法解析判定line end！ 
         outputPrint.flush();// 这里才能正式推 ，很关键！

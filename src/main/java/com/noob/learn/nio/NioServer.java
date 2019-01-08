@@ -9,7 +9,6 @@ import java.nio.channels.ServerSocketChannel;
 /**
  * Reactor
  * 
- * @author xiongwenjun
  */
 public class NioServer {
     private static ServerSocketChannel serverSocketChannel = null; //用于监听客户端的连接，所有客户端连接的父管道

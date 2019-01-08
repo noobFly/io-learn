@@ -38,12 +38,12 @@ public class RequestHandler implements Runnable {
      * 接收请求并返回响应。 接收、响应的字符中是否带\n以读取方式有关
      */
     public void run() {
-        System.out.println("客户端连接: " + clientSocketAddress);
+        System.out.println(String.format("客户端连接: %s", clientSocketAddress));
 
         try {
             handleWithoutLineBreak();
             // handleWithLineBreak1();
-            //     handleWithLineBreak2();
+            // handleWithLineBreak2();
         } catch (IOException e) {
             throw new RuntimeException(e);
 
@@ -93,7 +93,9 @@ public class RequestHandler implements Runnable {
         System.out.println("接收到客户端" + clientSocketAddress + "的信息： " + request);
 
         //在本测试用例中，是否需要输出"\n" 由客户端的读取方式而定！
-        String msg = "来自服务端的感谢" + turns + ", 因为: " + request + "\n";
+        String msg = "服务端的感谢" + turns + ", 因为: " + request + "\n";
+        System.out.println("发出信息->>>>" + msg);
+
         outputStream.write(msg.getBytes());
     }
 }

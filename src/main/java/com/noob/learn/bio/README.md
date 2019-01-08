@@ -1,15 +1,12 @@
 com.noob.learn.bio 基础socket实现阻塞IO通讯
-
-两次阻塞 1、等待连接  ServerSocket.accept() 2、 等待数据读取 read、readLine...
 <P>
 总结：
 <p>
-1.
-单线程处理(BioServer.requestHandler)的阻塞是由于单线程导致的，与阻塞IO的真实原因不是一个概念。
+两次阻塞 1、等待连接  ServerSocket.accept() 2、 等待数据读取 read/readLine...
 <p>
-2.
+1.单线程处理(BioServer.requestHandler)的阻塞是由于单线程导致的，与阻塞IO的真实原因不是一个概念。
 <p>
-无论于服务端还是客户端，当Socket与ServerSocket连接上后，都是通过 "Socket"的InputStream的读入与OutputStream的写出来实现消息的通讯。(例子中的这部分可以抽取公共模块)
+2. 无论于服务端还是客户端，当Socket与ServerSocket连接上后，都是通过 "Socket"的InputStream的读入与OutputStream的写出来实现消息的通讯。(例子中的这部分可以抽取公共模块--类似于NIO例子中的处理)
 <p>
 InputStream中读取数据的方式要与OutputStream中的输出数据相匹配才能有效快速的解析出数据。
 读取方式可以不同，但相同的是解析（读取）数据时阻塞；不同读取方式在客户端socket正常关闭OutputStream与非正常断开的呈现不一样。
