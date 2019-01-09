@@ -10,9 +10,12 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Scanner;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 与客户端通讯处理
  */
+@Slf4j
 public class RequestHandler implements Runnable {
 
     private Socket        clientSocket;       //客户端socket
@@ -38,7 +41,7 @@ public class RequestHandler implements Runnable {
      * 接收请求并返回响应。 接收、响应的字符中是否带\n以读取方式有关
      */
     public void run() {
-        System.out.println(String.format("客户端连接: %s", clientSocketAddress));
+        log.info(String.format("客户端连接: %s", clientSocketAddress));
 
         try {
             //handleWithoutLineBreak();
@@ -70,8 +73,8 @@ public class RequestHandler implements Runnable {
      * <p>
      * 如果客户端传递的消息中没有"\n"， 只有在客户端close、shutdownOutput后消息才会全部打印处理, 表示:接收到所有消息;
      * <p>
-     * 所以 客户端异常退出时，在outputStream.write()还抛出异常： java.net.SocketException: Connection reset by peer:
-     * socket write error
+     * 所以 客户端异常退出时，在outputStream.write()还抛出异常： java.net.SocketException:
+     * Connection reset by peer: socket write error
      */
     private void handleWithLineBreak1() throws IOException {
         Scanner input = new Scanner(inputStream);
@@ -104,11 +107,11 @@ public class RequestHandler implements Runnable {
     }
 
     private void outwrite(int turns, String request) throws IOException {
-        System.out.println("接收到客户端" + clientSocketAddress + "的信息： " + request);
+        log.info("接收到客户端" + clientSocketAddress + "的信息： " + request);
 
         //在本测试用例中，是否需要输出"\n" 由客户端的读取方式而定！
         String msg = "服务端的感谢" + turns + ", 因为: " + request + "\n";
-        System.out.println("发出信息->>>>" + msg);
+        log.info("发出信息->>>>" + msg);
 
         outputStream.write(msg.getBytes());
     }

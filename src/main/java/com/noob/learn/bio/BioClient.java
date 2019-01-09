@@ -11,9 +11,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 阻塞IO
  */
+@Slf4j
 public class BioClient {
     private static OutputStream outputStream = null;
     private static PrintWriter  outputPrint  = null;
@@ -25,7 +28,7 @@ public class BioClient {
         try {
             //创建客户端Socket，指定连接服务器地址和端口
             socket = new Socket("localhost", 8080);
-            System.out.println("客户端启动:" + socket.getLocalSocketAddress());//每一个客户端分配一个端口号
+            log.info("客户端启动:" + socket.getLocalSocketAddress());//每一个客户端分配一个端口号
 
             //获取输入流，并读取服务器端的响应
             inputStream = socket.getInputStream();
@@ -54,7 +57,7 @@ public class BioClient {
             while (true) {
                 if (inputScanner.hasNext()) { //阻塞获取数据！！！
                     // 要求服务端响应一定要输出一个换行！！ 否则虽然能读取响应，但无法解析判定line end！ 
-                    System.out.println(inputScanner.nextLine());
+                    log.info(inputScanner.nextLine());
                 }
             }
 
@@ -81,7 +84,7 @@ public class BioClient {
               /*  if (time.intValue() > 1) {
                     msg = "【test】"; // 验证read()不会主动清空原有数据 ,而readLine()会定位nextLine的起始索引 
                 }*/
-                System.out.println("发出信息 ->>>>" + msg);
+                log.info("发出信息 ->>>>" + msg);
                 outputPrint.write(msg);
                 // outputPrint.println();
                 outputPrint.flush(); // 这里才能正式推，很关键！
@@ -102,7 +105,7 @@ public class BioClient {
     private static int sendMsgToServerOne(Socket socket, PrintWriter outputPrint) {
         //获取输出流，定时向服务器端发信息
         String msg = "客户端" + socket.getLocalSocketAddress() + "的慰问1";
-        System.out.println("发出信息->>>>" + msg);
+        log.info("发出信息->>>>" + msg);
         outputPrint.write(msg);
         // outputPrint.println(); // 若服务端使用readLine, 一定要输出一个换行！！ 否则服务端虽然能读取客户端的输出流，但无法解析判定line end！ 
         outputPrint.flush();// 这里才能正式推 ，很关键！

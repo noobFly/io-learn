@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 客户端与服务端的信息处理合并在一起。
  * <p>
@@ -22,6 +24,7 @@ import java.util.Set;
  * ，自己的输入是对方的输出.
  * 自己的localAddress是对面的RemoteAddress,自己的RemoteAddress是对面的localAddress.
  */
+@Slf4j
 public class IOHandler {
     private Selector                    selector;                                         //多路复用器
     private boolean                     stop      = false;                                //是否中断执行
@@ -97,7 +100,7 @@ public class IOHandler {
                     //将SocketChannel注册到多路复用器上，注册SelectionKey.OP_READ操作位，监听网络读操作，然后发送请求消息给服务端。
                     sc.register(selector, SelectionKey.OP_WRITE); // localAddress: /127.0.0.1:51083;  remoteAddress: localhost/127.0.0.1:8080
                 } else {
-                    System.out.println(String.format("客户端%s连接失败!", sc.getLocalAddress()));
+                    log.info(String.format("客户端%s连接失败!", sc.getLocalAddress()));
                     System.exit(1);// 连接失败，进程退出
                 }
             }
@@ -168,7 +171,7 @@ public class IOHandler {
                 });
             }
 
-            System.out.println(String.format("接收到客户端%s的信息： %s", sc.getRemoteAddress(), readInMsg));
+            log.info(String.format("接收到客户端%s的信息： %s", sc.getRemoteAddress(), readInMsg));
 
             sc.register(selector, SelectionKey.OP_WRITE);
 
@@ -211,7 +214,7 @@ public class IOHandler {
         writeBuffer.put(bytes);
         writeBuffer.flip();
         sc.write(writeBuffer);
-        System.out.println(String.format("发出信息->>>>%s", sendMsg));
+        log.info(String.format("发出信息->>>>%s", sendMsg));
 
         if (writeBuffer.hasRemaining()) {
             sc.register(selector, SelectionKey.OP_WRITE); // writeBuffer 可以是一个全局共享内存达到持续写入的效果

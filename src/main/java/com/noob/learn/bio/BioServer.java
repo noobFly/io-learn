@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 总结： 两次阻塞 1、等待连接 2、 等待数据读取
  * <p>
@@ -23,12 +25,13 @@ import java.net.Socket;
  * 4. shutdownOutput()后再write是无效的.
  * <p>
  */
+@Slf4j
 public class BioServer {
 
     public static void main(String[] args) throws IOException {
 
         ServerSocket serverSocket = new ServerSocket(8080);
-        System.out.println("服务器启动, 服务地址: " + serverSocket.getLocalSocketAddress());
+        log.info("服务器启动, 服务地址: " + serverSocket.getLocalSocketAddress());
 
         while (true) {
             Socket clientSocket = serverSocket.accept(); //等待客户端连接--阻塞!!!
