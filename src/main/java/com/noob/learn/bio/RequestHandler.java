@@ -41,8 +41,8 @@ public class RequestHandler implements Runnable {
         System.out.println(String.format("客户端连接: %s", clientSocketAddress));
 
         try {
-            handleWithoutLineBreak();
-            // handleWithLineBreak1();
+            //handleWithoutLineBreak();
+            handleWithLineBreak1();
             // handleWithLineBreak2();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -52,12 +52,14 @@ public class RequestHandler implements Runnable {
 
     /**
      * 读入时，不要求客户端传入换行。
+     * <p>
+     * 客户端异常退出时，服务端read()抛出异常： java.net.SocketException: Connection reset
      */
     private void handleWithoutLineBreak() throws IOException {
         BufferedInputStream br = new BufferedInputStream(inputStream);
         byte[] buffer = new byte[1024];
         int turns = 1;
-        while (br.read(buffer) != -1) { // 阻塞直到有数据到来!  每次读取的存储位置都是从0开始。 read(b, 0, b.length)。经过本场景下的测试，开始位置还必须是0 !!!!
+        while (br.read(buffer) != -1) { //阻塞直到有数据到来!  可自定义读取缓存的begin和end: read(b, 11, 50); 并不会清空原有的数据!
             outwrite(turns, new String(buffer));
             turns++;
         }
@@ -65,26 +67,38 @@ public class RequestHandler implements Runnable {
 
     /**
      * 读入时，需要客户端传入换行！
+     * <p>
+     * 如果客户端传递的消息中没有"\n"， 只有在客户端close、shutdownOutput后消息才会全部打印处理, 表示:接收到所有消息;
+     * <p>
+     * 所以 客户端异常退出时，在outputStream.write()还抛出异常： java.net.SocketException: Connection reset by peer:
+     * socket write error
      */
     private void handleWithLineBreak1() throws IOException {
         Scanner input = new Scanner(inputStream);
         int turns = 1;
         while (true) {
             if (input.hasNext()) { // 阻塞，等待客户端数据！！
-                outwrite(turns, input.nextLine());
-                // 如果客户端传递的消息中没有"\n"， 只有在客户端close、shutdownOutput后消息才会全部打印处理; 异常退出时，还抛出异常： java.net.SocketException: Connection reset by peer: socket write error
+                outwrite(turns, input.nextLine()); // nextLine(): he position is set to the beginning of the next line.
                 turns++;
             }
         }
 
     }
 
+    /**
+     * 读入时，需要客户端传入换行！
+     * <p>
+     * 如果客户端传递的消息中没有"\n"
+     * <p>
+     * 当客户端正常shutdownOutput、close 时才会进入当前行执行，得到的结果是null;
+     * <p>
+     * 客户端异常退出时，服务端readLine()抛出异常： java.net.SocketException: Connection reset
+     */
     private void handleWithLineBreak2() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         int turns = 1;
         while (br.readLine() != null) {
-            outwrite(turns, br.readLine());
-            // 如果客户端传递的消息中没有"\n" , 当客户端正常shutdownOutput、close 时才会进入当前行执行，得到的结果是null; 异常退出时，服务端抛出异常： java.net.SocketException: Connection reset
+            outwrite(turns, br.readLine()); // readLine()会定位nextLine的起始索引
             turns++;
         }
     }

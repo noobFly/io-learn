@@ -33,8 +33,8 @@ public class BioClient {
 
             outputStream = socket.getOutputStream();//字节输出
             outputPrint = new PrintWriter(outputStream);//将输出流包装成打印流
-            // int waitTime = keepSendMsgToServer(socket, outputPrint);
-            int waitTime = sendMsgToServerOne(socket, outputPrint);
+            int waitTime = keepSendMsgToServer(socket, outputPrint);
+            // int waitTime = sendMsgToServerOne(socket, outputPrint);
 
             Thread.sleep(waitTime);
 
@@ -78,11 +78,15 @@ public class BioClient {
             AtomicInteger time = new AtomicInteger(1);
             service.scheduleWithFixedDelay(() -> {
                 String msg = "客户端" + socket.getLocalSocketAddress() + "的慰问" + time.intValue();
+              /*  if (time.intValue() > 1) {
+                    msg = "【test】"; // 验证read()不会主动清空原有数据 ,而readLine()会定位nextLine的起始索引 
+                }*/
                 System.out.println("发出信息 ->>>>" + msg);
                 outputPrint.write(msg);
+                // outputPrint.println();
                 outputPrint.flush(); // 这里才能正式推，很关键！
-                    time.addAndGet(1);
-                }, 0, 2, TimeUnit.SECONDS);
+                time.addAndGet(1);
+            }, 0, 2, TimeUnit.SECONDS);
 
         });
         outputThread.start();
