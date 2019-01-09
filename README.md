@@ -1,6 +1,8 @@
 # io-learn
+<p>
 com.noob.learn.bio  socket/socketServer accept()实现阻塞IO通讯
-com.noob.learn.nio  SocketChannel/ServerSocketChannel Selector open() 实现非阻塞IO 多路复用 通讯 
+<p>
+ com.noob.learn.nio  SocketChannel/ServerSocketChannel Selector open() 实现非阻塞IO 多路复用 通讯 
 
 <p>
 类比于维护双方通讯的信道：
