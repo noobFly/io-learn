@@ -15,7 +15,12 @@ SocketChannel: 单个客户端的连接管道.
 /**
  * SelectableChannel: public final SelectionKey register(Selector sel, int ops) throws ClosedChannelException
 **/
-Selector: 多路复用器, 通过显示注册各个不同的SelectionKey事件来达到调度： 
+Selector: 多路复用器, 通过显示注册各个不同的SelectionKey事件来达到调度：。
+<p>
+DirectByteBuffer:
+不使用JVM堆栈而是通过操作系统来创建内存块用作缓冲区，它与当前操作系统能够更好的耦合，因此能进一步提高I/O操作速度,比较适合读写操作。但是分配直接缓冲区的系统开销很大，因此只有在缓冲区较大并长期存在，或者需要经常重用时，才使用这种缓冲区
+p>
+HeapByteBuffer: 比较适合创建新的缓冲区，并且重复读写不会太多的应用
 
 <p>
 1. 客户端发起的连接操作是异步的，可以通过在多路复用器注册OP_CONNECT等待后续结果，不需要像之前的客户端那样被同步阻塞。
