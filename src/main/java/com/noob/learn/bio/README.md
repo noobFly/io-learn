@@ -11,7 +11,7 @@ com.noob.learn.bio 基础socket实现阻塞IO通讯
 3. InputStream中读取数据的方式要与OutputStream中的输出数据相匹配才能有效快速的解析出数据。
 读取方式可以不同，但相同的是解析（读取）数据时阻塞；不同读取方式在客户端socket正常关闭OutputStream与非正常断开的呈现不一样。
 具体参看RequestHandler中处理reqesut, 推荐使用handleWithoutLineBreak(); 
-但有个弊端: InputStream的read()是不会主动清空原有数据, 而readLine()/nextLine()会定位新一行数据的起始索引
+但有个弊端: InputStream的read()是不会主动清空原有数据, 而readLine()/nextLine()会定位新一行数据的起始索引。但在测试发现readLine在数据量过大时有数据的丢失？？
 <p>
 4. OutputStream： 
 <p>
