@@ -1,4 +1,4 @@
-package com.noob.learn.test;
+package com.noob.learn;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
