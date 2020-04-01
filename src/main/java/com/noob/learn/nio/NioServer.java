@@ -17,7 +17,7 @@ public class NioServer {
     private static Selector            selector            = null; // 多路复用器
 	/**
 	 * 
-	 * 同一个端口只能被一个ServerSocket绑定监听。 否则报错：
+	 * 同一个端口只能被一个ServerSocketChannel绑定监听。 否则报错：
 	 * <p>
        Exception in thread "main" java.net.BindException: Address already in use: bind
 

@@ -5,7 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import lombok.extern.slf4j.Slf4j;
-
 /**
  * 总结： 两次阻塞 1、等待连接 2、 等待数据读取
  * <p>
@@ -24,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
  * <p>
  * 4. shutdownOutput()后再write是无效的.
  * <p>
+ * 参考 https://blog.csdn.net/mijichui2153/article/details/80969404?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task
+
  */
 @Slf4j
 public class BioServer {
