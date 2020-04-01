@@ -15,26 +15,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
-
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 经过测试发现，BIO/NIO的单次的读入多少由定义的buffer大小决定。数据长度没有超出buffer大小将会一次性读入
  * <p>
- * TODO readLine并read 读入差了1万条？？？！！！！
  * 
  * @author noob
  */
 @Slf4j
-public class Test {
+public class FileAnalysis {
 
     public static void main(String[] args) throws IOException {
-        new Test().analysis("2018");
+        new FileAnalysis().analysis("2018");
     }
 
     public String analysis(String mark) throws IOException {
@@ -119,8 +118,9 @@ public class Test {
         try {
             fin = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
             List<JSONObject> list = Lists.newArrayList();
-            while (fin.readLine() != null) {
-                list.add(JSONObject.parseObject(fin.readLine()));
+            String line ;
+            while (( line = fin.readLine() )!= null) {
+                list.add(JSONObject.parseObject(line));
             }
 
             result = analysis(mark, list);
