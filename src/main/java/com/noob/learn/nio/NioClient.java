@@ -5,7 +5,14 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-
+/**
+ * 服务器若下线,
+ * <p> 
+ *客户端 在判定SocketChannel.finishConnect()时报异常：
+ * <p>
+ * java.net.ConnectException: Connection refused: no further information
+ *
+ */
 public class NioClient {
     public static void main(String[] args) throws IOException {
         SocketChannel socketChannel = SocketChannel.open();

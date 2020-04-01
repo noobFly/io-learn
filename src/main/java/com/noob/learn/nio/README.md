@@ -29,3 +29,23 @@ HeapByteBuffer: 比较适合创建新的缓冲区，并且重复读写不会太�
 这意味着一个Selector线程可以同时处理成千上万个客户端连接，而且性能不会随着客户端的增加而线性下降，因此，它非常适合做高性能、高负载的网络服务器。
 
 4. JDK1.7升级了NIO类库，升级后的NIO类库被称为NIO2.0，正式提供了异步文件I/O操作，同时提供了与UNIX网络编程事件驱动I/O对应的AIO.
+
+
+
+
+6. 同一个端口只能被一个ServerSocket绑定监听。 否则报错：
+Exception in thread "main" java.net.BindException: Address already in use: bind
+	at sun.nio.ch.Net.bind0(Native Method)
+	at sun.nio.ch.Net.bind(Unknown Source)
+	at sun.nio.ch.Net.bind(Unknown Source)
+	at sun.nio.ch.ServerSocketChannelImpl.bind(Unknown Source)
+	at java.nio.channels.ServerSocketChannel.bind(Unknown Source)
+	at com.noob.learn.nio.NioServer.main(NioServer.java:21)
+
+7. 若服务端下线，则客户端报连接拒绝
+java.net.ConnectException: Connection refused: no further information
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method) ~[na:1.8.0_201]
+	at sun.nio.ch.SocketChannelImpl.finishConnect(Unknown Source) ~[na:1.8.0_201]
+	at com.noob.learn.nio.IOHandler.handleMsgFromInput(IOHandler.java:100) ~[classes/:na]
+	at com.noob.learn.nio.IOHandler.exectue(IOHandler.java:60) ~[classes/:na]
+	at com.noob.learn.nio.NioClient.main(NioClient.java:28) [classes/:na]
