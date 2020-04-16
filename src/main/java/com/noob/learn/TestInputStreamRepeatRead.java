@@ -34,6 +34,8 @@ public class TestInputStreamRepeatRead {
 	 * <p>
 	 * 通过ByteArrayOutputStream，以缓存的方式去处理
 	 * <p>
+	 * pos标识已读的位置
+	 * <p>
 	 * 通过mark(设置字节流的标记) 和reset(将“字节流中下一个被读取的位置”重置到mark所标记的位置) 方法，以标记和重置的方式实现
 	 * BufferedInputStream也可以，但是FileInputStream不支持
 	 * <p>
@@ -44,7 +46,7 @@ public class TestInputStreamRepeatRead {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(msg.getBytes()); // 初始时pos|mark都为0
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		IOUtils.copy(inputStream, outputStream);// 输出后： pos为12、mark为0
-		// inputStream.mark(12);// 入参无意义。mark方法是将 mark值设置为post值。 
+		// inputStream.mark(12);// mark方法是将 mark值设置为pos值。入参无意义。当前测试场景下可不使用
 		System.out.println("第一次：" + outputStream.toString());
 		System.out.println("第二次：" + outputStream.toString());// 自带缓存可多次读取
 
