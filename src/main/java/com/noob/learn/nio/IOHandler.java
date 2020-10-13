@@ -66,6 +66,9 @@ public class IOHandler {
 									key.channel().close();
 							}
 						}
+						// 将这个 key 从迭代器中删除, 因为 select() 方法仅仅是简单地将就绪的 IO 操作放到 selectedKeys 集合中, 因此如从
+						// selectedKeys 获取到一个 key, 但是没有将它删除, 那么下一次 select 时, 这个 key 所对应的 IO 事件还在
+						// selectedKeys 中。
 						iterator.remove();
 
 					}
@@ -98,7 +101,7 @@ public class IOHandler {
 				SocketChannel sc = (SocketChannel) key.channel();// localAddress: null; remoteAddress:
 																	// localhost/127.0.0.1:8080
 				if (sc.finishConnect()) {
-					// 将SocketChannel注册到多路复用器上，注册SelectionKey.OP_READ操作位，监听网络读操作，然后发送请求消息给服务端。
+					// 将SocketChannel注册到多路复用器上，更新SekectedKeys 中的 key 的 interest set为SelectionKey.OP_READ，监听网络读操作，然后发送请求消息给服务端。
 					sc.register(selector, SelectionKey.OP_WRITE); // localAddress: /127.0.0.1:51083; remoteAddress:
 																	// localhost/127.0.0.1:8080
 				} else {
