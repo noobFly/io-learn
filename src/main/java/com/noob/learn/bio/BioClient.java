@@ -99,7 +99,7 @@ public class BioClient {
 
 		});
 		outputThread.start();
-		return 100000;
+		return 100000000;
 	}
 
 	/**

@@ -27,13 +27,13 @@ public class ByteBufferTest {
         System.out.println(String.format("初始化后：hasRemaining: %s", directBuffers.hasRemaining()));
         directBuffers.compact();
         System.out.println(String.format("compact后：hasRemaining: %s", directBuffers.hasRemaining()));
-       /* System.out.println("----------Test wrap--------");
+        System.out.println("----------Test wrap--------");
         byte[] bytes = new byte[32];
-        buffer = ByteBuffer.wrap(bytes);
-        System.out.println(buffer);
+        directBuffers = ByteBuffer.wrap(bytes);
+        System.out.println(directBuffers);
 
-        buffer = ByteBuffer.wrap(bytes, 10, 10);
-        System.out.println(buffer);*/
+        directBuffers = ByteBuffer.wrap(bytes, 10, 10);
+        System.out.println(directBuffers);
         
         
 
@@ -46,9 +46,9 @@ public class ByteBufferTest {
             fout = new FileOutputStream("fileout").getChannel();
             while (fin.read(directBuffer) != -1) {
                 directBuffer.flip();
-                byte[] bytes = new byte[directBuffer.remaining()];
+                byte[] bytes2 = new byte[directBuffer.remaining()];
                 directBuffer.get(bytes);
-                System.out.println(new String(bytes, "UTF-8"));
+                System.out.println(new String(bytes2, "UTF-8"));
                 fout.write(directBuffer);
                 directBuffer.clear();
             }

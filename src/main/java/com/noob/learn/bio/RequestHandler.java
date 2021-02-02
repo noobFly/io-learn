@@ -45,15 +45,25 @@ public class RequestHandler implements Runnable {
 
         try {
             //handleWithoutLineBreak();
-            handleWithLineBreak1();
+           // handleWithLineBreak1();
             // handleWithLineBreak2();
-        } catch (IOException e) {
+            keepOut();
+        } catch (Exception e) {
             throw new RuntimeException(e);
 
         }
     }
 
-    /**
+	private void keepOut() throws Exception {
+		while (true) {
+			String msg = "飞机 大炮 坦克 \n";
+			outputStream.write(msg.getBytes());
+			outputStream.flush();
+			Thread.sleep(100);
+		}
+	}
+
+	/**
      * 读入时，不要求客户端传入换行。
      * <p>
      * 客户端异常退出时，服务端read()抛出异常： java.net.SocketException: Connection reset

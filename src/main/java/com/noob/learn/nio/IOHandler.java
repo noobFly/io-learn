@@ -67,8 +67,7 @@ public class IOHandler {
 							}
 						}
 						// 将这个 key 从迭代器中删除, 因为 select() 方法仅仅是简单地将就绪的 IO 操作放到 selectedKeys 集合中, 因此如从
-						// selectedKeys 获取到一个 key, 但是没有将它删除, 那么下一次 select 时, 这个 key 所对应的 IO 事件还在
-						// selectedKeys 中。
+						// selectedKeys 获取到一个 key, 但是没有将它删除, 那么下一次 select 时, 这个 key 所对应的 IO 事件还会在 selectedKeys 中。
 						iterator.remove();
 
 					}
